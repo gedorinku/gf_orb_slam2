@@ -24,21 +24,21 @@ IF(${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm")
     add_definitions("-DENABLE_SSE")
     MESSAGE("SSE flags: " ${SSE_FLAGS})
     # Optimized for Jetson TX2 only; refer to https://devtalk.nvidia.com/default/topic/1028179/jetson-tx2/gcc-options-for-tx2
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}     -Wl,--no-as-needed -pthread -fopenmp -Wall -O3 -ffast-math -flto -march=armv8-a+crypto -mcpu=cortex-a57+crypto")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--no-as-needed -pthread -fopenmp -Wall -O3 -ffast-math -flto -march=armv8-a+crypto -mcpu=cortex-a57+crypto")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}     -Wl,--no-as-needed -pthread -fopenmp -lgomp -Wall -O3 -ffast-math -flto -march=armv8-a+crypto -mcpu=cortex-a57+crypto")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--no-as-needed -pthread -fopenmp -lgomp　-Wall -O3 -ffast-math -flto -march=armv8-a+crypto -mcpu=cortex-a57+crypto")
 ELSE()
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}     -Wl,--no-as-needed -pthread -fopenmp -Wall -O3 -march=native ")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--no-as-needed -pthread -fopenmp -Wall -O3 -march=native")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}     -Wl,--no-as-needed -pthread -fopenmp -lgomp -Wall -O3 -march=native ")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--no-as-needed -pthread -fopenmp -lgomp -Wall -O3 -march=native")
 ENDIF()
 
 # Add CUDA support
-if(ENABLE_CUDA_IN_OPENCV)
-    find_package(CUDA REQUIRED)
-    set(CUDA_PROPAGATE_HOST_FLAGS OFF)
-    SET(CUDA_HOST_COMPILER /usr/bin/g++)
-    LIST(APPEND CUDA_NVCC_FLAGS "--compiler-options -fno-strict-aliasing -use_fast_math")
-    #LIST(APPEND CUDA_NVCC_FLAGS "--compiler-options -Xcompiler -fpermissive")
-endif()
+#if(ENABLE_CUDA_IN_OPENCV)
+#    find_package(CUDA REQUIRED)
+#    set(CUDA_PROPAGATE_HOST_FLAGS OFF)
+#    SET(CUDA_HOST_COMPILER /usr/bin/g++)
+#    LIST(APPEND CUDA_NVCC_FLAGS "--compiler-options -fno-strict-aliasing -use_fast_math")
+#    #LIST(APPEND CUDA_NVCC_FLAGS "--compiler-options -Xcompiler -fpermissive")
+#endif()
 
 # Check C++11 or C++0x support
 include(CheckCXXCompilerFlag)
@@ -117,9 +117,9 @@ MESSAGE("EIGEN include dir: " ${EIGEN3_INCLUDE_DIR})
 
 # customize pangolin dir
 # set(Pangolin_DIR /opt/Pangolin/lib/cmake/Pangolin/)
-# find_package(Pangolin REQUIRED)
-set(Pangolin_INCLUDE_DIRS /opt/Pangolin/include/)
-set(Pangolin_LIBRARIES /opt/Pangolin/lib/libpangolin.so)
+find_package(Pangolin REQUIRED)
+#set(Pangolin_INCLUDE_DIRS /opt/Pangolin/include/)
+#set(Pangolin_LIBRARIES /opt/Pangolin/lib/libpangolin.so)
 MESSAGE("Pangolin include dir: " ${Pangolin_INCLUDE_DIRS})
 
 # customize openblas dir
@@ -161,6 +161,7 @@ include_directories(
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
 
+set(ENABLE_CUDA_IN_OPENCV false)
 if(ENABLE_CUDA_IN_OPENCV)
     cuda_include_directories(
       ${CUDA_TOOLKIT_ROOT_DIR}/samples/common/inc

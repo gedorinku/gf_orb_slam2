@@ -304,7 +304,7 @@ public:
 
     void AddOdomPlanned(const double & odom_stamp, const cv::Mat & odom_Tcw)
     {
-        assert(odom_Twc.rols == 4 && odom_Twc.cols == 4);
+        assert(odom_Tcw.rows == 4 && odom_Tcw.cols == 4);
         mvOdomPlanned.push_back({odom_stamp, odom_Tcw});
     }
 
