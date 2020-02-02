@@ -18,17 +18,22 @@ IF(NOT DEFINED ENABLE_CUDA_IN_OPENCV)
 ENDIF()
 message("Enable cuda support: " ${ENABLE_CUDA_IN_OPENCV})
 
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS} -O0 -g")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS} -O3")
+
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_C_FLAGS} -O0 -g")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS} -O3")
 
 # Check architecture
 IF(${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm")
     add_definitions("-DENABLE_SSE")
     MESSAGE("SSE flags: " ${SSE_FLAGS})
     # Optimized for Jetson TX2 only; refer to https://devtalk.nvidia.com/default/topic/1028179/jetson-tx2/gcc-options-for-tx2
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}     -Wl,--no-as-needed -pthread -fopenmp -lgomp -Wall -O3 -ffast-math -flto -march=armv8-a+crypto -mcpu=cortex-a57+crypto")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--no-as-needed -pthread -fopenmp -lgomp　-Wall -O3 -ffast-math -flto -march=armv8-a+crypto -mcpu=cortex-a57+crypto")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}     -Wl,--no-as-needed -pthread -fopenmp -lgomp -Wall -ffast-math -flto -march=armv8-a+crypto -mcpu=cortex-a57+crypto")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--no-as-needed -pthread -fopenmp -lgomp　-Wall -ffast-math -flto -march=armv8-a+crypto -mcpu=cortex-a57+crypto")
 ELSE()
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}     -Wl,--no-as-needed -pthread -fopenmp -lgomp -Wall -O3 -march=native ")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--no-as-needed -pthread -fopenmp -lgomp -Wall -O3 -march=native")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}     -Wl,--no-as-needed -pthread -fopenmp -lgomp -Wall -march=native ")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--no-as-needed -pthread -fopenmp -lgomp -Wall -march=native")
 ENDIF()
 
 # Add CUDA support
