@@ -89,6 +89,9 @@ public:
     
 };
 
+#include <cstdlib>
+#include <include/ImagePublisher.h>
+
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "Stereo");
@@ -189,6 +192,18 @@ int main(int argc, char **argv)
 
     ros::NodeHandle nh;
 
+    std::string seqPrefix = argv[6];
+    {
+        const auto idx = seqPrefix.find("/image_");
+        if (idx == std::string::npos)
+        {
+            std::cerr << "sequence filename format error: " << seqPrefix << std::endl;
+            return 1;
+        }
+
+        seqPrefix = seqPrefix.substr(0, idx);
+    }
+
     // message_filters::Subscriber<sensor_msgs::Image> left_sub(nh, "/camera/left/image_raw", 1);
     // message_filters::Subscriber<sensor_msgs::Image> right_sub(nh, "camera/right/image_raw", 1);
     message_filters::Subscriber<sensor_msgs::Image> left_sub(nh, argv[6], 1);
@@ -201,6 +216,8 @@ int main(int argc, char **argv)
     // gazebo simulated stereo rig
     message_filters::Synchronizer<sync_pol> sync(sync_pol(2), left_sub, right_sub);
     sync.registerCallback(boost::bind(&ImageGrabber::GrabStereo, &igb, _1, _2));
+
+    ImagePublisher<std::function<void(const sensor_msgs::ImageConstPtr&, const sensor_msgs::ImageConstPtr&)> > pub(seqPrefix, boost::bind(&ImageGrabber::GrabStereo, &igb, _1, _2));
     
     //
     // ros::Subscriber sub = nh.subscribe("/odom", 100, &ImageGrabber::GrabOdom, &igb);
