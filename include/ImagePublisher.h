@@ -27,6 +27,7 @@ private:
         {
             std::cerr << "failed to load image: " << filename << std::endl;
         }
+        std::cout << "loaded: " << filename << std::endl;
         return cv_bridge::CvImage(std_msgs::Header(), "bgr8", image).toImageMsg();
     }
 
@@ -54,6 +55,9 @@ private:
 
         const auto prefixLeft = sequenceDir + "/image_0/";
         const auto prefixRight = sequenceDir + "/image_1/";
+
+        // 1000でとめる
+        imagesCount = 1000;
         for (int i = 0; i < imagesCount; i++)
         {
             std::stringstream ss;
