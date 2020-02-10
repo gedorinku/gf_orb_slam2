@@ -52,14 +52,21 @@ using namespace std;
 
 #define FRAME_WITH_INFO_PUBLISH
 
+constexpr auto trackTimeFilename = "TrackTime.txt";
 
 class ImageGrabber
 {
 public:
-    ImageGrabber(ORB_SLAM2::System* pSLAM):mpSLAM(pSLAM){
+    ImageGrabber(ORB_SLAM2::System* pSLAM):mpSLAM(pSLAM), trackTimeFile(trackTimeFilename){
 #ifdef MAP_PUBLISH
       mnMapRefreshCounter = 0;
 #endif
+        if (!trackTimeFile.is_open())
+        {
+            std::cerr << "failed to open: " << trackTimeFilename << std::endl;
+            exit(1);
+        }
+        trackTimeFile.precision(10);
     }
 
     void GrabStereo(const sensor_msgs::ImageConstPtr& msgLeft,const sensor_msgs::ImageConstPtr& msgRight);
@@ -74,6 +81,8 @@ public:
     
     double timeStamp;
     cv::Mat Tmat;
+
+    std::ofstream trackTimeFile;
 
     ros::Publisher mpCameraPosePublisher, mpCameraPoseInIMUPublisher;
     //    ros::Publisher mpDensePathPub;
@@ -403,7 +412,10 @@ double latency_trans = ros::Time::now().toSec() - msgLeft->header.stamp.toSec();
 double latency_total = ros::Time::now().toSec() - cv_ptrLeft->header.stamp.toSec();
 // ROS_INFO("ORB-SLAM Tracking Latency: %.03f sec", ros::Time::now().toSec() - cv_ptrLeft->header.stamp.toSec());
 // ROS_INFO("Image Transmision Latency: %.03f sec; Total Tracking Latency: %.03f sec", latency_trans, latency_total);
-ROS_INFO("Pose Tracking Latency: %.03f sec", latency_total - latency_trans);
+    const auto trackTime = latency_total - latency_trans;
+    trackTimeFile << trackTime << std::endl;
+
+ROS_INFO("Pose Tracking Latency: %.03f sec", trackTime);
 
 /*
     // std::cout << "broadcast pose!" << std::endl;
