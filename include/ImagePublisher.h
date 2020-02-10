@@ -68,6 +68,8 @@ private:
             const auto rightImage = load(rightFilename);
             callback(leftImage, rightImage);
         }
+
+        ros::shutdown();
     }
 
 };
