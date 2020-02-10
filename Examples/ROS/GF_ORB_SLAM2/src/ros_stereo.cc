@@ -254,6 +254,7 @@ int main(int argc, char **argv)
     cout << "ros_stereo: done with spin!" << endl;
 
     // Save camera trajectory
+    SLAM.SaveTrajectoryKITTI(std::string(argv[8]) + "_KITTI_FrameTrajectory.txt");
     SLAM.SaveKeyFrameTrajectoryTUM( std::string(argv[8]) + "_KeyFrameTrajectory.txt" );
     SLAM.SaveTrackingLog( std::string(argv[8]) + "_Log.txt" );
 #ifdef LOCAL_BA_TIME_LOGGING
