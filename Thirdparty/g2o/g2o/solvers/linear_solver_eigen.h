@@ -75,6 +75,8 @@ class LinearSolverEigen: public LinearSolver<MatrixType>
     };
 
   public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     LinearSolverEigen() :
       LinearSolver<MatrixType>(),
       _init(true), _blockOrdering(false), _writeDebug(false)
