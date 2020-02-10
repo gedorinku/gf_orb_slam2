@@ -384,6 +384,12 @@ Tracking::~Tracking() {
 void Tracking::SetRealTimeFileStream(string fNameRealTimeTrack)
 {
     f_realTimeTrack.open(fNameRealTimeTrack.c_str());
+    if (!f_realTimeTrack.is_open())
+    {
+        std::cerr << "failed to open: " << fNameRealTimeTrack << std::endl;
+        std::exit(1);
+    }
+
     f_realTimeTrack << fixed;
     f_realTimeTrack << "#TimeStamp Tx Ty Tz Qx Qy Qz Qw" << std::endl;
 }
@@ -1061,6 +1067,7 @@ void Tracking::Track()
     //    }
 
 #ifdef REALTIME_TRAJ_LOGGING
+    std::cout << "currrent frame Tcw empty: " << mCurrentFrame.mTcw.empty() << std::endl;
     if(!mCurrentFrame.mTcw.empty())
     {
         // Write the real time tracking result to file
@@ -1083,6 +1090,8 @@ void Tracking::Track()
         f_realTimeTrack << setprecision(6) << timestamp << setprecision(7)
                         << " " << t.at<float>(0) << " " << t.at<float>(1) << " " << t.at<float>(2)
                         << " " << q[0] << " " << q[1] << " " << q[2] << " " << q[3] << endl;
+        f_realTimeTrack.flush();
+        std::cout << "end" << f_realTimeTrack.is_open() << std::endl;
 
     }
 #endif

@@ -1260,7 +1260,12 @@ public:
 
         // TODO
         // start lazier greedy from here
-        _ASSERTE(card_ < N);
+        if (card_ >= N)
+        {
+            std::cerr << "card_: " << card_ << " N: " << N << std::endl;
+        }
+        // _ASSERTE(card_ < N);
+
         _ASSERTE(SC.n_BlockColumn_Num() == N);
         // set the size of random subset
         const size_t szLazierSubset = static_cast<size_t>( float(N) / float(card_) * LAZIER_SAMPLING_FACTOR );
